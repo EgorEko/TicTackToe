@@ -19,10 +19,10 @@ public class TicTackToe {
 
     public static void main(String[] args) {
         printGameRules();
-        /*if (new Random().nextBoolean()) {
+        if (new Random().nextBoolean()) {
             makeComputerProgress();
             printGameTable();
-        }*/
+        }
         while (true) {
             int number = readUserInput();
             makeUserProgress(number);
@@ -168,69 +168,109 @@ public class TicTackToe {
     }
 
     private static int findHorizontalCell(int number, char ch) {
+        int res = 0;
         for (int i = 0; i < 3; i++) {
             if (GAME_TABLE[i][0] == GAME_TABLE[i][1] &&
                     GAME_TABLE[i][0] == ch) {
-                return countNewIndexes(i, 2);
+                res = countNewIndexes(i, 2);
+                if (isCellFree(res)) {
+                    return res;
+                }
             }
             if (GAME_TABLE[i][0] == GAME_TABLE[i][2] &&
                     GAME_TABLE[i][0] == ch) {
-                return countNewIndexes(i, 1);
+                res = countNewIndexes(i, 1);
+                if (isCellFree(res)) {
+                    return res;
+                }
             }
             if (GAME_TABLE[i][1] == GAME_TABLE[i][2] &&
                     GAME_TABLE[i][1] == ch) {
-                return countNewIndexes(i, 0);
+                res = countNewIndexes(i, 0);
+                if (isCellFree(res)) {
+                    return res;
+                }
             }
         }
         return 0;
     }
 
     private static int findVerticalCell(int number, char ch) {
+        int res = 0;
         for (int i = 0; i < 3; i++) {
             if (GAME_TABLE[0][i] == GAME_TABLE[1][i] &&
                     GAME_TABLE[0][i] == ch) {
-                return countNewIndexes(2, i);
+                res = countNewIndexes(2, i);
+                if (isCellFree(res)) {
+                    return res;
+                }
             }
             if (GAME_TABLE[0][i] == GAME_TABLE[2][i] &&
                     GAME_TABLE[0][i] == ch) {
-                return countNewIndexes(1, i);
+                res = countNewIndexes(1, i);
+                if (isCellFree(res)) {
+                    return res;
+                }
             }
             if (GAME_TABLE[1][i] == GAME_TABLE[2][i] &&
                     GAME_TABLE[1][i] == ch) {
-                return countNewIndexes(0, i);
+                res = countNewIndexes(0, i);
+                if (isCellFree(res)) {
+                    return res;
+                }
             }
         }
         return 0;
     }
 
     private static int findDiaonalCell1(int number, char ch) {
+        int res = 0;
         if (GAME_TABLE[0][0] == GAME_TABLE[1][1] &&
                 GAME_TABLE[1][1] == ch) {
-            return 3;
+            res = 3;
+            if (isCellFree(res)) {
+                return res;
+            }
         }
         if (GAME_TABLE[0][0] == GAME_TABLE[2][2] &&
                 GAME_TABLE[0][0] == ch) {
-            return 5;
+            res = 5;
+            if (isCellFree(res)) {
+                return res;
+            }
         }
         if (GAME_TABLE[1][1] == GAME_TABLE[2][2] &&
                 GAME_TABLE[1][1] == ch) {
-            return 7;
+            res = 7;
+            if (isCellFree(res)) {
+                return res;
+            }
         }
         return 0;
     }
 
     private static int findDiaonalCell2(int number, char ch) {
+        int res = 0;
         if (GAME_TABLE[0][2] == GAME_TABLE[1][1] &&
                 GAME_TABLE[1][1] == ch) {
-            return 1;
+            res = 1;
+            if (isCellFree(res)) {
+                return res;
+            }
         }
         if (GAME_TABLE[1][1] == GAME_TABLE[2][0] &&
                 GAME_TABLE[2][0] == ch) {
-            return 9;
+            res = 9;
+            if (isCellFree(res)) {
+                return res;
+            }
         }
         if (GAME_TABLE[2][0] == GAME_TABLE[0][2] &&
                 GAME_TABLE[0][2] == ch) {
-            return 5;
+            res = 5;
+            if (isCellFree(res)) {
+                return res;
+            }
         }
         return 0;
     }
