@@ -1,5 +1,3 @@
-import java.nio.file.attribute.UserDefinedFileAttributeView;
-import java.util.EmptyStackException;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -129,64 +127,130 @@ public class TicTackToe {
     }
 
     private static void makeUserProgress(int number) {
+        System.out.println("User made a progress.");
         makeProgress(number, USER);
-        System.out.println("Computer made a progress.");
     }
 
     private static void makeComputerProgress() {
-        int number = 0;
-        while (true) {
-            number = isCheckChar(number, COMPUTER);
+
+        int number = findTwoCharToProgress(COMPUTER);
+        if (number == 0) {
+            number = findTwoCharToProgress(USER);
             if (number == 0) {
-                number = isCheckChar(number, USER);
+                number = findOneCharToProgress();
                 if (number == 0) {
                     if (GAME_TABLE[1][1] == EMPTY) {
                         number = 5;
                     } else {
-                        number = new Random().nextInt(9) + 1;
+                        while (true) {
+                            number = new Random().nextInt(9) + 1;
+                            break;
+                        }
                     }
                 }
             }
-            if (isCellFree(number)) {
-                makeProgress(number, COMPUTER);
-                break;
+        }
+        if (isCellFree(number)) {
+            System.out.println("Computer made a progress.");
+            makeProgress(number, COMPUTER);
+        }
+    }
+
+    private static int findOneCharToProgress() {
+        int res = findFullHorizontalCell();
+        if (res != 0) {
+            return res;
+        }
+        res = findFullVerticalCell();
+        return res;
+    }
+
+    private static int findFullVerticalCell() {
+        for (int i = 0; i < 3; i++) {
+            if (GAME_TABLE[0][i] == COMPUTER &&
+                    GAME_TABLE[1][i] == EMPTY &&
+                    GAME_TABLE[2][i] == EMPTY) {
+                return getNumberByIndexes(1, i);
             }
         }
-    }
-
-    private static int isCheckChar(int number, char ch) {
-        //int count = 0;
-        if (findHorizontalCell(number, ch) != 0) {
-            return findHorizontalCell(number, ch);
-        } else if (findVerticalCell(number, ch) != 0) {
-            return findVerticalCell(number, ch);
-        } else if (findDiaonalCell1(number, ch) != 0) {
-            return findDiaonalCell1(number, ch);
-        } else {
-            return findDiaonalCell2(number, ch);
+        for (int i = 0; i < 3; i++) {
+            if (GAME_TABLE[1][i] == COMPUTER &&
+                    GAME_TABLE[0][i] == EMPTY &&
+                    GAME_TABLE[2][i] == EMPTY) {
+                return getNumberByIndexes(0, i);
+            }
         }
+        for (int i = 0; i < 3; i++) {
+            if (GAME_TABLE[2][i] == COMPUTER &&
+                    GAME_TABLE[0][i] == EMPTY &&
+                    GAME_TABLE[1][i] == EMPTY) {
+                return getNumberByIndexes(0, i);
+            }
+        }
+        return 0;
     }
 
-    private static int findHorizontalCell(int number, char ch) {
-        int res = 0;
+    private static int findFullHorizontalCell() {
+        for (int i = 0; i < 3; i++) {
+            if (GAME_TABLE[i][0] == COMPUTER &&
+                    GAME_TABLE[i][1] == EMPTY &&
+                    GAME_TABLE[i][2] == EMPTY) {
+                return getNumberByIndexes(i, 1);
+            }
+        }
+        for (int i = 0; i < 3; i++) {
+            if (GAME_TABLE[i][1] == COMPUTER &&
+                    GAME_TABLE[i][0] == EMPTY &&
+                    GAME_TABLE[i][2] == EMPTY) {
+                return getNumberByIndexes(i, 0);
+            }
+        }
+        for (int i = 0; i < 3; i++) {
+            if (GAME_TABLE[i][2] == COMPUTER &&
+                    GAME_TABLE[i][0] == EMPTY &&
+                    GAME_TABLE[i][1] == EMPTY) {
+                return getNumberByIndexes(i, 0);
+            }
+        }
+        return 0;
+    }
+
+    private static int findTwoCharToProgress(char ch) {
+        int res = findEmptyHorizontalCell(ch);
+        if (res != 0) {
+            return res;
+        }
+        res = findEmptyVerticalCell(ch);
+        if (res != 0) {
+            return res;
+        }
+        res = findEmptyDiaonalCell1(ch);
+        if (res != 0) {
+            return res;
+        }
+        res = findEmptyDiaonalCell2(ch);
+        return res;
+    }
+
+    private static int findEmptyHorizontalCell(char ch) {
         for (int i = 0; i < 3; i++) {
             if (GAME_TABLE[i][0] == GAME_TABLE[i][1] &&
                     GAME_TABLE[i][0] == ch) {
-                res = countNewIndexes(i, 2);
+                int res = getNumberByIndexes(i, 2);
                 if (isCellFree(res)) {
                     return res;
                 }
             }
             if (GAME_TABLE[i][0] == GAME_TABLE[i][2] &&
                     GAME_TABLE[i][0] == ch) {
-                res = countNewIndexes(i, 1);
+                int res = getNumberByIndexes(i, 1);
                 if (isCellFree(res)) {
                     return res;
                 }
             }
             if (GAME_TABLE[i][1] == GAME_TABLE[i][2] &&
                     GAME_TABLE[i][1] == ch) {
-                res = countNewIndexes(i, 0);
+                int res = getNumberByIndexes(i, 0);
                 if (isCellFree(res)) {
                     return res;
                 }
@@ -195,26 +259,25 @@ public class TicTackToe {
         return 0;
     }
 
-    private static int findVerticalCell(int number, char ch) {
-        int res = 0;
+    private static int findEmptyVerticalCell(char ch) {
         for (int i = 0; i < 3; i++) {
             if (GAME_TABLE[0][i] == GAME_TABLE[1][i] &&
                     GAME_TABLE[0][i] == ch) {
-                res = countNewIndexes(2, i);
+                int res = getNumberByIndexes(2, i);
                 if (isCellFree(res)) {
                     return res;
                 }
             }
             if (GAME_TABLE[0][i] == GAME_TABLE[2][i] &&
                     GAME_TABLE[0][i] == ch) {
-                res = countNewIndexes(1, i);
+                int res = getNumberByIndexes(1, i);
                 if (isCellFree(res)) {
                     return res;
                 }
             }
             if (GAME_TABLE[1][i] == GAME_TABLE[2][i] &&
                     GAME_TABLE[1][i] == ch) {
-                res = countNewIndexes(0, i);
+                int res = getNumberByIndexes(0, i);
                 if (isCellFree(res)) {
                     return res;
                 }
@@ -223,25 +286,24 @@ public class TicTackToe {
         return 0;
     }
 
-    private static int findDiaonalCell1(int number, char ch) {
-        int res = 0;
+    private static int findEmptyDiaonalCell1(char ch) {
         if (GAME_TABLE[0][0] == GAME_TABLE[1][1] &&
                 GAME_TABLE[1][1] == ch) {
-            res = 3;
+            int res = 3;
             if (isCellFree(res)) {
                 return res;
             }
         }
         if (GAME_TABLE[0][0] == GAME_TABLE[2][2] &&
                 GAME_TABLE[0][0] == ch) {
-            res = 5;
+            int res = 5;
             if (isCellFree(res)) {
                 return res;
             }
         }
         if (GAME_TABLE[1][1] == GAME_TABLE[2][2] &&
                 GAME_TABLE[1][1] == ch) {
-            res = 7;
+            int res = 7;
             if (isCellFree(res)) {
                 return res;
             }
@@ -249,25 +311,24 @@ public class TicTackToe {
         return 0;
     }
 
-    private static int findDiaonalCell2(int number, char ch) {
-        int res = 0;
+    private static int findEmptyDiaonalCell2(char ch) {
         if (GAME_TABLE[0][2] == GAME_TABLE[1][1] &&
                 GAME_TABLE[1][1] == ch) {
-            res = 1;
+            int res = 1;
             if (isCellFree(res)) {
                 return res;
             }
         }
         if (GAME_TABLE[1][1] == GAME_TABLE[2][0] &&
                 GAME_TABLE[2][0] == ch) {
-            res = 9;
+            int res = 9;
             if (isCellFree(res)) {
                 return res;
             }
         }
         if (GAME_TABLE[2][0] == GAME_TABLE[0][2] &&
                 GAME_TABLE[0][2] == ch) {
-            res = 5;
+            int res = 5;
             if (isCellFree(res)) {
                 return res;
             }
@@ -275,7 +336,7 @@ public class TicTackToe {
         return 0;
     }
 
-    private static int countNewIndexes(int row, int col) {
+    private static int getNumberByIndexes(int row, int col) {
         int number = 0;
         if (row == 0 && col == 0) {
             return 7;
